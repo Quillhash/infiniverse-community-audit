@@ -6,7 +6,7 @@ verbosity([Verbosity.INFO, Verbosity.OUT])
 verbosity([Verbosity.INFO, Verbosity.OUT, Verbosity.DEBUG])
 
 CONTRACT_WORKSPACE = sys.path[0] + "/../"
-TOKEN_CONTRACT_WORKSPACE = sys.path[0] + "/../../infinicoin/"
+TOKEN_CONTRACT_WORKSPACE = sys.path[0] + "/../infinicoin/"
 
 
 class Test(unittest.TestCase):
@@ -124,11 +124,81 @@ class Test(unittest.TestCase):
 
     def test_02_handleDeposit(self):
         COMMENT('''
-            second test was running
+            Deposit funds to the infiniverse via token contract
         ''')
+        infinicoinio.push_action(
+            "transfer",
+            {
+                "from": alice,
+                "to": infiniverse,
+                "quantity": "100.0000 INF",
+                "memo": "Depositing 100 INF to infiniverse contract"
+            },
+            [alice]
+        )
+
+        # get tables data
+        alice_account = infinicoinio.table("accounts", alice)
+        inf_account = infinicoinio.table("accounts", infiniverse)
+        deposits = infiniverse.table("deposit", infiniverse)
+
+        COMMENT('''
+            Check accounts table in token contract and deposits in infiniverse contract
+        ''')
+        self.assertEqual(
+            alice_account.json["rows"][0]["balance"], "900.0000 INF",
+            "Balances for alice before and after depositing are inconsistent"
+        )
+
+        self.assertEqual(
+            inf_account.json["rows"][0]["balance"], "100.0000 INF",
+            "Balances for infiniverse before and after depositing are inconsistent"
+        )
+
+        self.assertEqual(
+            deposits.json["rows"][0]["owner"], "alice",
+            "alice account in deposists was not found"
+        )
+
+        self.assertEqual(
+            deposits.json["rows"][0]["balance"], "100.0000 INF",
+            "aclice does not have 100 INF in deposits account"
+        )
 
     def test_03_closeDeposit(self):
-        pass
+        COMMENT('''
+            Close the deposit account of alice
+        ''')
+        infiniverse.push_action(
+            "closedeposit",
+            {
+                "owner": alice
+            },
+            [infiniverse]
+        )
+
+        # get tables data
+        alice_account = infinicoinio.table("accounts", alice)
+        inf_account = infinicoinio.table("accounts", infiniverse)
+        deposits = infiniverse.table("deposit", infiniverse)
+
+        COMMENT('''
+        Check accounts and balances
+        ''')
+        self.assertEqual(
+            alice_account.json["rows"][0]["balance"], "1000.0000 INF",
+            "Refund not provided to Alice"
+        )
+
+        self.assertEqual(
+            inf_account.json["rows"][0]["balance"], "0.0000 INF",
+            "Refund not deducted from infiniverse account"
+        )
+
+        self.assertEqual(
+            len(deposits.json["rows"]), 0,
+            "Alice account was not removed from the deposits"
+        )
 
     def tearDown(self):
         pass
