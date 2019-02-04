@@ -179,16 +179,30 @@ class Test(unittest.TestCase):
 
         # get table data            
         lands = infiniverse.table("land", infiniverse)
-        inf_account = infinicoinio.table("accounts", infiniverse)
-        issuer_account = infinicoinio.table("accounts", infinicoinio)
         deposits = infiniverse.table("deposit", infiniverse)
 
         COMMENT('''
         Check accounts and balances
         ''')
-        # self.assert_equal(
+        self.assertEqual(
+            lands.json["rows"][0]["id"], 0,
+            "land id is different"
+        )
 
-        # )
+        self.assertEqual(
+            lands.json["rows"][0]["owner"], "alice",
+            "owner is not alice"
+        )
+
+        self.assertEqual(
+            deposits.json["rows"][0]["owner"], "alice",
+            "alice account does not exists in deposit"
+        )
+
+        self.assertEqual(
+            deposits.json["rows"][0]["balance"], "899.0000 INF",
+            "alice deposit balance is not same"
+        )
 
     def tearDown(self):
         pass
