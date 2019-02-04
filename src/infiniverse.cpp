@@ -195,6 +195,7 @@ void infiniverse::buyland(name buyer, uint64_t land_id, asset price)
         row.owner = buyer;
     });
 
+    // remove all persistent objects previously present on this land
     persistent_table persistents(_self, _self.value);
     auto land_index = persistents.get_index<"bylandid"_n>();
     auto persistents_itr = land_index.find(land_id);
@@ -207,12 +208,15 @@ void infiniverse::buyland(name buyer, uint64_t land_id, asset price)
 void infiniverse::persistpoly(uint64_t land_id, std::string poly_id,
                               vector3 position, vector3 orientation, vector3 scale)
 {
+    // invaid poly
     name user = require_land_owner_auth(land_id);
     assert_vectors_within_bounds(position, orientation, scale);
 
+    // get primary key Id
     uint64_t source = static_cast<uint64_t>(PlacementSource::POLY);
     uint64_t asset_id = add_poly(user, poly_id);
 
+    // save persistence info
     persistent_table persistents(_self, _self.value);
     persistents.emplace(user, [&](auto &row) {
         row.id = persistents.available_primary_key();
@@ -430,9 +434,12 @@ uint64_t infiniverse::add_poly(const name &user, const std::string &poly_id)
 
     eosio_assert((poly_id.length() == 11), "Poly Id format is invalid");
 
+    // get all the polys for the given user by filtering via secondary index
     poly_table poly(_self, _self.value);
     auto user_index = poly.get_index<"byuser"_n>();
     auto poly_itr = user_index.find(user.value);
+
+    // iterate over polys and return if the poly with given poly_id was found
     while (poly_itr != user_index.end() && poly_itr->user == user)
     {
         if (poly_itr->poly_id == poly_id)
@@ -442,6 +449,7 @@ uint64_t infiniverse::add_poly(const name &user, const std::string &poly_id)
         poly_itr++;
     }
 
+    // in case was not found, create a new entry and return new id
     uint64_t new_id = poly.available_primary_key();
     poly.emplace(user, [&](auto &row) {
         row.id = new_id;
