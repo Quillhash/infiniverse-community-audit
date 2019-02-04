@@ -161,6 +161,35 @@ class Test(unittest.TestCase):
         )
 
 
+    def test_02_moveland(self):
+        COMMENT('''
+        Move the land to new location
+        ''')
+        infiniverse.push_action(
+            "moveland",
+            {
+                "land_id": 0,
+                "lat_north_edge": 40.00001183,
+                "long_east_edge": 50.00001183,
+                "lat_south_edge": 40,
+                "long_west_edge": 50
+            },
+            [alice]
+        )
+
+        # get table data            
+        lands = infiniverse.table("land", infiniverse)
+        inf_account = infinicoinio.table("accounts", infiniverse)
+        issuer_account = infinicoinio.table("accounts", infinicoinio)
+        deposits = infiniverse.table("deposit", infiniverse)
+
+        COMMENT('''
+        Check accounts and balances
+        ''')
+        # self.assert_equal(
+
+        # )
+
     def tearDown(self):
         pass
 

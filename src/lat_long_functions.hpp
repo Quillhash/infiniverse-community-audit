@@ -1,4 +1,4 @@
-#include <cmath>
+#include <cmath> // used for round() method
 #include <utility>
 
 const double meters_per_degree_latitude = 111133;

@@ -107,6 +107,7 @@ void infiniverse::moveland(uint64_t land_id, double lat_north_edge,
 {
     name owner = require_land_owner_auth(land_id);
 
+    // can not move land if prices already set
     land_price_table landprices(_self, _self.value);
     auto landprices_itr = landprices.find(land_id);
     eosio_assert(landprices_itr == landprices.end(), "You cannot move a land that is up for sale");
@@ -114,6 +115,7 @@ void infiniverse::moveland(uint64_t land_id, double lat_north_edge,
     land_table lands(_self, _self.value);
     land moving_land = lands.get(land_id);
 
+    // calculate old and new land fee after moving
     std::pair<double, double> old_land_size = lat_long_to_meters(moving_land.lat_north_edge,
                                                                  moving_land.long_east_edge, moving_land.lat_south_edge, moving_land.long_west_edge);
     asset old_land_fee = calculate_land_reg_fee(old_land_size, reg_inf_per_sqm, 1);
