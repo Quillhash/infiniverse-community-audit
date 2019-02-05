@@ -333,6 +333,19 @@ class Test(unittest.TestCase):
         persistent = infiniverse.table("persistent", infiniverse)
         poly = infiniverse.table("poly", infiniverse)
 
+        COMMENT('''
+        Check if polygon removed from persist and poly tables
+        ''')
+        self.assertEqual(
+            len(persistent.json["rows"]), 0,
+            "polygon not removed from persistent table"
+        )
+
+        self.assertEqual(
+            len(poly.json["rows"]), 0,
+            "polygon not removed from poly table"
+        ) 
+
     def setUp(self):
         pass
 
