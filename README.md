@@ -12,4 +12,4 @@ Link to the original repository https://github.com/InfiniverseAR/infiniverse-eos
 `cd ~/<contracts-directory-specified-during-installation>/`
 * Clone this repository `https://github.com/Quillhash/infiniverse-community-audit.git`
 * Run tests `python3 tests/test1.py`
-* Run unit tests `python3 tests/unittest1.py` `python3 tests/unittest3.py` `python3 tests/unittest3.py`
+* Run unit tests `python3 tests/unittest1.py` `python3 tests/unittest2.py` `python3 tests/unittest3.py`
