@@ -174,7 +174,7 @@ class Test(unittest.TestCase):
             {
                 "owner": alice
             },
-            [infiniverse]
+            [alice]
         )
 
         # get tables data

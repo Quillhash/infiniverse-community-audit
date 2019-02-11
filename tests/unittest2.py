@@ -350,7 +350,7 @@ class Test(unittest.TestCase):
             Set land price (puts up the land for the sale)
             ''')
 
-        target_price = to_inf(1000000000)
+        target_price = to_inf(max_supply * 1000) # reproduce bug
         land_id = 0
 
         infiniverse.push_action(  # potential bug here
